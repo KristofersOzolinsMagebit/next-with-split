@@ -10,6 +10,7 @@ type Config = RuntimeConfig[string]
 export const middleware = (req: NextRequest): NextMiddlewareResult => {
   const [splitKey, config] = getCurrentSplitConfig(req) ?? []
   if (!splitKey || !config || userAgent(req).isBot) return
+  console.log('splitKey', req.nextUrl.pathname, splitKey)
   const branch = getBranch(req, splitKey, config)
 
   return sticky(
@@ -28,7 +29,9 @@ const getCurrentSplitConfig = (req: NextRequest) => {
 
   return Object.entries(
     JSON.parse(process.env.NEXT_WITH_SPLIT_RUNTIME_CONFIG) as RuntimeConfig
-  ).find(([, { path }]) => new RegExp(path).test(req.nextUrl.href))
+  ).find(([, { path }]) => {
+    return new RegExp(path).test(req.nextUrl.pathname)
+  })
 }
 
 const getBranch = (req: NextRequest, splitKey: string, config: Config) => {
