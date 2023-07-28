@@ -14,7 +14,6 @@ var middleware = (req) => {
   const [splitKey, config] = getCurrentSplitConfig(req) ?? [];
   if (!splitKey || !config || userAgent(req).isBot)
     return;
-  console.log("splitKey", req.nextUrl.pathname, splitKey);
   const branch = getBranch(req, splitKey, config);
   return sticky(createResponse(req, branch, config), splitKey, branch, config.cookie);
 };
